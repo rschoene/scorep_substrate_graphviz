@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6a29924..4c52abd 100644
+index 6a29924..bb9934b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -5,9 +5,6 @@ option(BUILD_DEBUG "Include debugging symbols in library and print some usefull
@@ -17,6 +17,6 @@ index 6a29924..4c52abd 100644
  endif()
  
 -include_directories(${PROJECT_SOURCE_DIR}/src/ ${SCOREP_INCLUDE_DIRS})
-+include_directories(${PROJECT_SOURCE_DIR}/src/ ${PROJECT_SOURCE_DIR}/src/build/scorep_substrate_graphviz/include)
++include_directories(${PROJECT_SOURCE_DIR}/src/ ${PROJECT_SOURCE_DIR}/build/scorep_substrate_graphviz/include)
 +
  add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCE_FILES})
