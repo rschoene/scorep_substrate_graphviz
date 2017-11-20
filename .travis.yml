@@ -31,11 +31,11 @@ matrix:
 before_script:
   - mkdir build
   - cd build
-  - git clone https://github.com/rschoene/scorep_substrates_dynamic_filtering.git
-  - cd scorep_substrates_dynamic_filtering
+  - git clone https://github.com/rschoene/scorep_substrate_graphviz.git
+  - cd scorep_substrate_graphviz
   - git checkout scorep_headers
   - cd ../..
-  - git apply build/scorep_substrates_dynamic_filtering/0001-Creates-patch-for-CMakeLists.txt-needed-for-building.patch
+  - git apply build/scorep_substrate_graphviz/0001-Creates-patch-for-CMakeLists.txt-needed-for-building.patch
   - cd build
   - cmake ..
 script:
