@@ -19,4 +19,4 @@ index 6a29924..1dea2a1 100644
  
 -include_directories(${PROJECT_SOURCE_DIR}/src/ ${SCOREP_INCLUDE_DIRS})
 ++include_directories(${PROJECT_SOURCE_DIR}/src/ ${PROJECT_SOURCE_DIR}/build/scorep_substrate_graphviz/include/)
- add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCE_FILES})
