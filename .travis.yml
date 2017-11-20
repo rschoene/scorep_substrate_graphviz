@@ -1,3 +1,8 @@
+# blocklist
+branches:
+  except:
+  - scorep_headers
+
 language: generic
 sudo: required
 dist: trusty
