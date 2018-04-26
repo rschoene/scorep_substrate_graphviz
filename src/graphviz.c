@@ -1026,7 +1026,7 @@ static int64_t graphviz_get_requirement( SCOREP_Substrates_RequirementFlag flag 
 {
   switch ( flag )
   {
-      case SCOREP_SUBSTRATES_REQUIREMENT_EXPERIMENT_DIRECTORY:
+      case SCOREP_SUBSTRATES_REQUIREMENT_CREATE_EXPERIMENT_DIRECTORY:
           return 1;
       default:
           return 0;
