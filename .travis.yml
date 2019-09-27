@@ -5,6 +5,8 @@ branches:
 
 language: generic
 
+sudo: required
+
 dist: bionic
 
 matrix:
@@ -30,6 +32,8 @@ matrix:
       env: CXX=clang++-3.8 CC=clang-3.8
       addons:
         apt:
+          sources:
+              - sourceline: "ppa:andreasgocht/scorep"
           packages:
             - scorep
             - clang-3.8
@@ -37,8 +41,6 @@ matrix:
             - cmake-data
             - libunwind8
             - libunwind8-dev
-          sources:
-              - sourceline: "ppa:andreasgocht/scorep"
 
 before_script:
   - mkdir build
