@@ -32,6 +32,4 @@ if(BUILD_DEBUG)
 	add_definitions("-ggdb")
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR}/src/ ${PROJECT_SOURCE_DIR}/build/scorep_substrate_graphviz/include)
-
 add_library(${PROJECT_NAME} SHARED ${PLUGIN_SOURCE_FILES})
