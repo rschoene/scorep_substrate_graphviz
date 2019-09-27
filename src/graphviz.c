@@ -26,6 +26,8 @@
 
 #define VERBOSE 1
 
+#define UNUSED(x) (void)(x)
+
 /* from xavier aguilar */
 /* if last_enter == 0 -> event flow without last_enter and stride */
 struct temporal_event_flow
@@ -301,9 +303,8 @@ static inline void clean_up_closed_flows(struct prev_based_storage * region_thre
  */
 static void insert_successor_rule(struct thread_info * thread_info, struct region_entry * next_region, int is_exit, uint64_t * metrics)
 {
-  int32_t i,j;
+  int32_t j;
   int mapped=0;
-  int strides_existed;
   uint64_t visits=0;
 
   uint64_t stack_x=thread_info->last_stack_x;
@@ -322,7 +323,7 @@ static void insert_successor_rule(struct thread_info * thread_info, struct regio
 
   struct prev_based_storage * prev_info=NULL;
   /* find follow info */
-  for (i=0;i<per_thread_info->nr_avail_prevs;i++)
+  for (uint32_t i=0;i<per_thread_info->nr_avail_prevs;i++)
   {
     if ( stack_x == per_thread_info->avail_prevs[i])
     {
@@ -348,7 +349,7 @@ static void insert_successor_rule(struct thread_info * thread_info, struct regio
   visits=prev_info->visits;
 
   /* other enters: check whether we know the last region in event flow rules */
-  for (i=prev_info->nr_open_eventflows-1;i>=0;i--)
+  for (int32_t i=prev_info->nr_open_eventflows-1;i>=0;i--)
   {
     struct temporal_event_flow * current=prev_info->open_event_flows[i];
       /* if it is the expected stack */
@@ -399,7 +400,7 @@ static void insert_successor_rule(struct thread_info * thread_info, struct regio
   /* try to close event flows that can not be used any more */
   if ((prev_info->visits%CLEANUP)==(CLEANUP-1))
     {
-      for (i=0;i<prev_info->nr_open_eventflows;i++)
+      for (int32_t i=0;i<prev_info->nr_open_eventflows;i++)
       {
         struct temporal_event_flow * current=prev_info->open_event_flows[i];
         if (current->stride > 0)
@@ -487,12 +488,6 @@ static inline struct thread_info * get_thread_info()
 /* called when the program is started */
 static int graphviz_init()
 {
-    unsigned int storage_needed, number;
-    int i;
-    char buffer[1024];
-    char * binary_name;
-    int binary_name_length;
-
     memset(region_entries,0,sizeof(struct region_entry *)*HASH_SIZE);
     memset(thread_infos,0,sizeof(struct thread_info *)*MAX_THREADS);
     pthread_key_create(&thread_key, NULL);
@@ -507,10 +502,10 @@ static int graphviz_init()
 /* get an ID of the current stack that is static for a single run (fast) */
 static inline unsigned long long get_dynamic_id()
 {
-  unsigned long long id=0,i;
+  unsigned long long id=0;
   int max_size=128;
   void * ips[128];
-  int size;
+  int size,i;
   size= backtrace(ips,max_size);
   for (i=2;i<size;i++)
   {
@@ -529,7 +524,8 @@ static void graphviz_enter(
     SCOREP_RegionHandle     regionHandle,
     uint64_t*               metricValues)
 {
-  char * name=NULL;
+  UNUSED(location);
+  UNUSED(timestamp);
   struct region_entry * future_region=get_region(regionHandle);
 #ifdef ONLY_ENTER
   int j;
@@ -567,11 +563,14 @@ static void graphviz_enter(
  * by libadapt (in hashset), then call libadapt enter
  */
 static void graphviz_exit(
+    
     struct SCOREP_Location* location,
     uint64_t                timestamp,
     SCOREP_RegionHandle     regionHandle,
     uint64_t*               metricValues)
 {
+  UNUSED(location);
+  UNUSED(timestamp);
   struct region_entry * future_region=get_region(regionHandle);
 #ifdef ONLY_ENTER
   int j;
@@ -608,6 +607,7 @@ static void graphviz_define_metric(
 		SCOREP_MetricSourceType sourceType
 )
 {
+  UNUSED(metricHandle);
   if (num_metrics==16) return;
   if (mode != SCOREP_METRIC_MODE_ACCUMULATED_START || sourceType != SCOREP_METRIC_SOURCE_TYPE_PAPI)
   {
@@ -629,6 +629,9 @@ static void graphviz_define_region(
     SCOREP_ParadigmType     paradigm,
     SCOREP_RegionType       regionType)
 {
+  UNUSED(regionCanonicalName);
+  UNUSED(paradigm);
+  UNUSED(regionType);
 #ifdef ONLY_ENTER
   if (paradigm == SCOREP_PARADIGM_OPENMP) {
     if (regionType != SCOREP_REGION_PARALLEL)
@@ -681,11 +684,10 @@ static int compare( const void* a, const void* b)
  */
 static int64_t find_uber_stride(struct temporal_event_flow * flow)
 {
-  int index;
-  int diff=flow->additional_first_enters[0]-flow->first_enter;
+  int64_t diff=flow->additional_first_enters[0]-flow->first_enter;
 
   qsort( flow->additional_first_enters, flow->nr_additional_first_enters, sizeof(uint64_t), compare );
-  for (index=0;index<flow->nr_additional_first_enters-1;index++)
+  for (uint32_t index=0;index<flow->nr_additional_first_enters-1;index++)
   {
     if (diff != (flow->additional_first_enters[index+1]-flow->additional_first_enters[index]) )
     {
@@ -703,9 +705,8 @@ static void graphviz_finalize(void)
 	FILE * fd;
 	char buffer[1024];
 	char directory[1024];
-	uint32_t thread_num;
 	int i, ret;
-	uint32_t successor_rule_num;
+	int32_t successor_rule_num;
 
 	sprintf(directory, "%s/graphviz", functions->SCOREP_GetExperimentDirName());
 	ret = mkdir(directory, S_IWUSR | S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP);
@@ -725,7 +726,7 @@ static void graphviz_finalize(void)
 		}
 	}
 
-	for (thread_num = 0; thread_num < num_threads; thread_num++)
+	for (int32_t thread_num = 0; thread_num < num_threads; thread_num++)
 	{
 		uint64_t max_region_end = 0;
 		uint64_t min_region_start = 1000;
@@ -1022,7 +1023,7 @@ static void graphviz_set_callbacks(
 
 
 /* we need the output folder, therefore we tell Score-P about it */
-static int64_t graphviz_get_requirement( SCOREP_Substrates_RequirementFlag flag )
+static bool graphviz_get_requirement( SCOREP_Substrates_RequirementFlag flag )
 {
   switch ( flag )
   {
