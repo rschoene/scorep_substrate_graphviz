@@ -4,8 +4,7 @@ branches:
   - scorep_headers
 
 language: generic
-sudo: required
-dist: trusty
+dist: bionic
 matrix:
   include:
     - os: linux
