@@ -16,6 +16,7 @@ matrix:
           sources:
               - sourceline: "ppa:andreasgocht/scorep"
           packages:
+            - scorep       
             - g++-5
             - cmake
             - cmake-data
@@ -30,6 +31,7 @@ matrix:
       addons:
         apt:
           packages:
+            - scorep
             - clang-3.8
             - cmake
             - cmake-data
